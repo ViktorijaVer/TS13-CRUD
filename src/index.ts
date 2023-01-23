@@ -1,4 +1,4 @@
-const age = 23;
-console.log(age);
+import App from './components/app';
 
-console.log(age);
+const app = new App('#root');
+app.initialize();
