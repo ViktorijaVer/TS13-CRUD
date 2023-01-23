@@ -14,28 +14,32 @@ class App {
     const foundElement = document.querySelector<HTMLElement>(selector);
     this.carsCollection = new CarsCollection({ cars, brands, models });
 
-    if (foundElement === null) throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
+    if (foundElement === null) throw new Error(`Nerastas elementas su '${selector}'`);
 
     this.htmlElement = foundElement;
+    this.carsCollection = new CarsCollection({
+      cars,
+      brands,
+      models,
+    });
   }
 
-  initialize = (): void => {
-    const carTable = new Table({
-      title: 'Visi automobiliai',
-      columns: {
-        id: 'Id',
-        brand: 'Markė',
-        model: 'Modelis',
-        price: 'Kaina',
-        year: 'Metai',
-      },
-      rowsData: this.carsCollection.all.map(stringifyProps),
-    });;
-
+  public initialize = () => {
     const container = document.createElement('div');
     container.className = 'container my-5';
-    container.appendChild(carTable.htmlElement);
 
+    const table = new Table({
+      title: 'Visi automobiliai',
+      columns: {
+      id: 'Id',
+      brand: 'Markė',
+      model: 'Modelis',
+      price: 'Kaina',
+      year: 'Metai',
+    },
+    rowsData: this.carsCollection.all.map(stringifyProps),
+    });
+    container.append(table.htmlElement);
     this.htmlElement.append(container);
   };
 }

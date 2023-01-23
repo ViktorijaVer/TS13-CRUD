@@ -18,19 +18,13 @@ const cars_1 = __importDefault(__webpack_require__(/*! ../data/cars */ "./src/da
 const brands_1 = __importDefault(__webpack_require__(/*! ../data/brands */ "./src/data/brands.ts"));
 const models_1 = __importDefault(__webpack_require__(/*! ../data/models */ "./src/data/models.ts"));
 const cars_collection_1 = __importDefault(__webpack_require__(/*! ../helpers/cars-collection */ "./src/helpers/cars-collection.ts"));
+const stingify_object_1 = __importDefault(__webpack_require__(/*! ../helpers/stingify-object */ "./src/helpers/stingify-object.ts"));
 class App {
     constructor(selector) {
-        this.carToRowData = (car) => {
-            return {
-                id: car.id,
-                brand: car.brand,
-                model: car.model,
-                price: car.price.toString(),
-                year: car.year.toString(),
-            };
-        };
         this.initialize = () => {
-            const carTable = new table_1.default({
+            const container = document.createElement('div');
+            container.className = 'container my-5';
+            const table = new table_1.default({
                 title: 'Visi automobiliai',
                 columns: {
                     id: 'Id',
@@ -39,11 +33,9 @@ class App {
                     price: 'Kaina',
                     year: 'Metai',
                 },
-                rowsData: this.carsCollection.all.map(this.carToRowData),
+                rowsData: this.carsCollection.all.map(stingify_object_1.default),
             });
-            const container = document.createElement('div');
-            container.className = 'container my-5';
-            container.appendChild(carTable.htmlElement);
+            container.append(table.htmlElement);
             this.htmlElement.append(container);
         };
         const foundElement = document.querySelector(selector);
@@ -51,6 +43,11 @@ class App {
         if (foundElement === null)
             throw new Error(`Nerastas elementas su selektoriumi '${selector}'`);
         this.htmlElement = foundElement;
+        this.carsCollection = new cars_collection_1.default({
+            cars: cars_1.default,
+            brands: brands_1.default,
+            models: models_1.default,
+        });
     }
 }
 exports["default"] = App;
@@ -371,23 +368,35 @@ exports["default"] = models;
 /*!****************************************!*\
   !*** ./src/helpers/cars-collection.ts ***!
   \****************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports) {
 
 
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 class CarsCollection {
     constructor(props) {
-        this.joinCar = (car) => {
-            var _a, _b;
+        this.joinCar = (_a) => {
+            var _b, _c;
+            var { modelId } = _a, car = __rest(_a, ["modelId"]);
             const { brands, models } = this.props;
-            const carModel = models.find((model) => model.id === car.modelId);
+            const carModel = models.find((model) => model.id === modelId);
             const carBrand = brands.find((brand) => brand.id === (carModel === null || carModel === void 0 ? void 0 : carModel.brandId));
-            return Object.assign(Object.assign({}, car), { brand: (_a = (carBrand && carBrand.title)) !== null && _a !== void 0 ? _a : 'unknown', model: (_b = (carModel && carModel.title)) !== null && _b !== void 0 ? _b : 'unknown' });
+            return Object.assign(Object.assign({}, car), { brand: (_b = (carBrand && carBrand.title)) !== null && _b !== void 0 ? _b : 'unknown', model: (_c = (carModel && carModel.title)) !== null && _c !== void 0 ? _c : 'unknown' });
         };
         this.props = props;
     }
     get all() {
-        return this.props.cars.map(this.joinCar.bind(this));
+        return this.props.cars.map(this.joinCar);
     }
 }
 exports["default"] = CarsCollection;
@@ -409,6 +418,25 @@ exports["default"] = countObjectProperties;
 
 /***/ }),
 
+/***/ "./src/helpers/stingify-object.ts":
+/*!****************************************!*\
+  !*** ./src/helpers/stingify-object.ts ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const stringifyProps = (object) => {
+    const objectLikeArray = Object.entries(object);
+    const objectWithPropsStringified = objectLikeArray
+        .reduce((prevObj, [key, value]) => (Object.assign(Object.assign({}, prevObj), { [key]: String(value) })), {});
+    return objectWithPropsStringified;
+};
+exports["default"] = stringifyProps;
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -423,6 +451,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const app_1 = __importDefault(__webpack_require__(/*! ./components/app */ "./src/components/app.ts"));
 const app = new app_1.default('#root');
 app.initialize();
+exports["default"] = app_1.default;
 
 
 /***/ })
