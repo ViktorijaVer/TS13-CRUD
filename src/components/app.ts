@@ -4,8 +4,6 @@ import brands from "../data/brands";
 import models from "../data/models";
 import CarsCollection from '../helpers/cars-collection';
 import stringifyProps from "../helpers/stingify-object";
-import Car from '../types/car';
-
 
 class App {
   private htmlElement: HTMLElement;
@@ -21,16 +19,6 @@ class App {
     this.htmlElement = foundElement;
   }
 
-  private carToRowData = (car: Car) => {
-    return {
-      id: car.id,
-      brand: car.brand,
-      model: car.model,
-      price: car.price.toString(),
-      year: car.year.toString(),
-    };
-  }
-
   initialize = (): void => {
     const carTable = new Table({
       title: 'Visi automobiliai',
@@ -41,8 +29,8 @@ class App {
         price: 'Kaina',
         year: 'Metai',
       },
-      rowsData: this.carsCollection.all.map(this.carToRowData),
-    });
+      rowsData: this.carsCollection.all.map(stringifyProps),
+    });;
 
     const container = document.createElement('div');
     container.className = 'container my-5';
